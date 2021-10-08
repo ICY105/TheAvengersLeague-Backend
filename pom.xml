@@ -14,7 +14,6 @@
 	<groupId>com.revature</groupId>
 	<artifactId>TheAvengersLeague</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 	<name>TheAvengersLeague</name>
 	<description>Team-1's project-2 backend application.</description>
 	
@@ -84,6 +83,14 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

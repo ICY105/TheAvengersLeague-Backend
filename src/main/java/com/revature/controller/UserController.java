@@ -21,16 +21,14 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping("/id/{id}")
+	@GetMapping("/id={id}")
 	public ResponseEntity<User> findById(@PathVariable("id") final int id) {
-		System.out.println("Get id: " + id);
 		final User user = this.userService.findById(id);
 		return ResponseEntity.ok(user);
 	}
 	
-	@GetMapping("/username/{username}")
+	@GetMapping("/username={username}")
 	public ResponseEntity<User> findByUsername(@PathVariable("username") final String username) {
-		System.out.println("Get username: " + username);
 		final User user = this.userService.findByUsername(username);
 		return ResponseEntity.ok(user);
 	}

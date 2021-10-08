@@ -15,6 +15,7 @@
 	<artifactId>TheAvengersLeague</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>TheAvengersLeague</name>
+	<packaging>war</packaging>
 	<description>Team-1's project-2 backend application.</description>
 
 	<properties>

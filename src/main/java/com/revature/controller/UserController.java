@@ -4,20 +4,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.revature.models.User;
 import com.revature.models.json_mapping.CreateUser;
+import com.revature.models.json_mapping.ModifyUser;
 import com.revature.models.json_mapping.SendUser;
+import com.revature.models.json_mapping.SendUserComplete;
 import com.revature.models.json_mapping.SendUserDecks;
 import com.revature.models.json_mapping.SendUserInventory;
 import com.revature.service.UserService;
 
 @RestController
+@SessionAttributes("visitor")
 @RequestMapping("/user")
 @CrossOrigin(origins="*")
 public class UserController {
@@ -26,25 +31,31 @@ public class UserController {
 	private UserService userService;
 	
 	@GetMapping("/id={id}")
-	public ResponseEntity<?> findById(@PathVariable("id") final int id) {
+	public ResponseEntity<?> findById(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id) {
 		final User user = this.userService.findById(id);
 		if(user == null)
 			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
+		
+		if(visitor.getUserId() == user.getId())
+			return ResponseEntity.ok(new SendUserComplete(user));
 		else
 			return ResponseEntity.ok(new SendUser(user));
 	}
 	
 	@GetMapping("/username={username}")
-	public ResponseEntity<?> findByUsername(@PathVariable("username") final String username) {
+	public ResponseEntity<?> findByUsername(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("username") final String username) {
 		final User user = this.userService.findByUsername(username);
 		if(user == null)
 			return ResponseEntity.badRequest().body("No user exists with username " + username + ".");
+		
+		if(visitor.getUserId() == user.getId())
+			return ResponseEntity.ok(new SendUserComplete(user));
 		else
 			return ResponseEntity.ok(new SendUser(user));
 	}
 	
 	@GetMapping("/decks/id={id}")
-	public ResponseEntity<?> getDecks(@PathVariable("id") final int id) {
+	public ResponseEntity<?> getDecks(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id) {
 		final User user = this.userService.findById(id);
 		if(user == null)
 			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
@@ -53,7 +64,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/inventory/id={id}")
-	public ResponseEntity<?> getInventory(@PathVariable("id") final int id) {
+	public ResponseEntity<?> getInventory(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id) {
 		final User user = this.userService.findById(id);
 		if(user == null)
 			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
@@ -61,8 +72,51 @@ public class UserController {
 			return ResponseEntity.ok(new SendUserInventory(user));
 	}
 	
+	@GetMapping("/logout")
+	public ResponseEntity<?> logout(@ModelAttribute("visitor") final Visitor visitor) {
+		if(visitor.getUserId() == -1)
+			return ResponseEntity.badRequest().body("Not logged in.");
+		
+		visitor.setUserId(-1);
+		return ResponseEntity.ok("Logged out.");
+	}
+	
+	@PostMapping("/login/id={id}")
+	public ResponseEntity<?> login(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id, @RequestBody final CreateUser createUser) {
+		if(visitor.getUserId() != -1)
+			return ResponseEntity.badRequest().body("Logout before trying to log in as a new user.");
+		
+		final User user = this.userService.findById(id);
+		
+		if(user == null)
+			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
+		if(!user.getPassword().equals(createUser.getPassword()))
+			return ResponseEntity.badRequest().body("Incorrect password for user " + id + ".");
+		
+		visitor.setUserId(user.getId());
+		return ResponseEntity.ok(new SendUserComplete(user));
+	}
+	
+	@PostMapping("/modify")
+	public ResponseEntity<?> modifyUser(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final ModifyUser modifyUser) {
+		if(visitor.getUserId() == -1)
+			return ResponseEntity.badRequest().body("Not logged in as a user.");
+		
+		final User user = this.userService.findById(visitor.getUserId());
+		if(modifyUser.vaildFirstName())
+			user.setFirstName(modifyUser.getFirstName());
+		if(modifyUser.vaildLastName())
+			user.setLastName(modifyUser.getLastName());
+		if(modifyUser.vaildEmailName())
+			user.setEmail(modifyUser.getEmail());
+		if(modifyUser.vaildPasswordName())
+			user.setPassword(modifyUser.getPassword());
+		
+		return ResponseEntity.ok(new SendUserComplete(user));
+	}
+	
 	@PostMapping("/add")
-	public ResponseEntity<?> createUser(@RequestBody final CreateUser createUser) {
+	public ResponseEntity<?> createUser(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final CreateUser createUser) {
 		final String validate = createUser.validate();
 		
 		if(validate.equals("valid")) {
@@ -74,11 +128,17 @@ public class UserController {
 				return ResponseEntity.ok("Email must be unique.");
 			
 			final User dbUser = this.userService.insert(user);
+			visitor.setUserId(dbUser.getId());
 			return ResponseEntity.ok(new SendUser(dbUser));
 			
 		} else {
 			return ResponseEntity.badRequest().body(validate);
 		}
 	}
+	
+	@ModelAttribute("visitor")
+    public Visitor getVisitor () {
+        return new Visitor();
+    }
 	
 }

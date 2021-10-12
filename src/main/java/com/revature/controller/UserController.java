@@ -14,6 +14,7 @@ import com.revature.models.User;
 import com.revature.models.json_mapping.CreateUser;
 import com.revature.models.json_mapping.SendUser;
 import com.revature.models.json_mapping.SendUserDecks;
+import com.revature.models.json_mapping.SendUserInventory;
 import com.revature.service.UserService;
 
 @RestController
@@ -49,6 +50,15 @@ public class UserController {
 			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
 		else
 			return ResponseEntity.ok(new SendUserDecks(user));
+	}
+	
+	@GetMapping("/inventory/id={id}")
+	public ResponseEntity<?> getInventory(@PathVariable("id") final int id) {
+		final User user = this.userService.findById(id);
+		if(user == null)
+			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
+		else
+			return ResponseEntity.ok(new SendUserInventory(user));
 	}
 	
 	@PostMapping("/add")

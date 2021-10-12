@@ -9,14 +9,20 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SendUser {
+public class SendUserComplete {
 	
-	public SendUser(final User user) {
+	public SendUserComplete(final User user) {
 		this.id = user.getId();
+		this.firstName = user.getFirstName();
+		this.lastName = user.getLastName();
 		this.username = user.getUsername();
+		this.email = user.getEmail();
 	}
 	
 	private int id;
+	private String firstName;
+	private String lastName;
 	private String username;
+	private String email;
 
 }

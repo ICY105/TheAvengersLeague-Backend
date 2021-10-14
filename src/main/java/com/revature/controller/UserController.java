@@ -101,10 +101,10 @@ public class UserController {
 			visitor.setUserId(user.getId());
 			return ResponseEntity.ok(new SendUserComplete(user));
 		} else if(loginUser.getUsername() != null) {
-			final User user = this.userService.findByUsername(loginUser.getPassword());
+			final User user = this.userService.findByUsername(loginUser.getUsername());
 			
 			if(user == null)
-				return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + loginUser.getUsername() + "."));
+				return ResponseEntity.badRequest().body(new JsonError("No user exists with username " + loginUser.getUsername() + "."));
 			if(!user.getPassword().equals(loginUser.getPassword()))
 				return ResponseEntity.badRequest().body(new JsonError("Incorrect password for user " + loginUser.getUsername() + "."));
 			

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.revature.models.User;
 import com.revature.models.json_mapping.CreateUser;
+import com.revature.models.json_mapping.JsonError;
+import com.revature.models.json_mapping.JsonStatus;
 import com.revature.models.json_mapping.ModifyUser;
 import com.revature.models.json_mapping.ModifyUserDecks;
 import com.revature.models.json_mapping.SendUser;
@@ -35,7 +37,7 @@ public class UserController {
 	public ResponseEntity<?> findById(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id) {
 		final User user = this.userService.findById(id);
 		if(user == null)
-			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
+			return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + id + "."));
 		
 		if(visitor.getUserId() == user.getId())
 			return ResponseEntity.ok(new SendUserComplete(user));
@@ -47,7 +49,7 @@ public class UserController {
 	public ResponseEntity<?> findByUsername(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("username") final String username) {
 		final User user = this.userService.findByUsername(username);
 		if(user == null)
-			return ResponseEntity.badRequest().body("No user exists with username " + username + ".");
+			return ResponseEntity.badRequest().body(new JsonError("No user exists with username " + username + "."));
 		
 		if(visitor.getUserId() == user.getId())
 			return ResponseEntity.ok(new SendUserComplete(user));
@@ -59,7 +61,7 @@ public class UserController {
 	public ResponseEntity<?> getDecks(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id) {
 		final User user = this.userService.findById(id);
 		if(user == null)
-			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
+			return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + id + "."));
 		else
 			return ResponseEntity.ok(new SendUserDecks(user));
 	}
@@ -68,7 +70,7 @@ public class UserController {
 	public ResponseEntity<?> getInventory(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id) {
 		final User user = this.userService.findById(id);
 		if(user == null)
-			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
+			return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + id + "."));
 		else
 			return ResponseEntity.ok(new SendUserInventory(user));
 	}
@@ -76,23 +78,23 @@ public class UserController {
 	@GetMapping("/logout")
 	public ResponseEntity<?> logout(@ModelAttribute("visitor") final Visitor visitor) {
 		if(visitor.getUserId() == -1)
-			return ResponseEntity.badRequest().body("Not logged in.");
+			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
 		
 		visitor.setUserId(-1);
-		return ResponseEntity.ok("Logged out.");
+		return ResponseEntity.ok(new JsonStatus("Logged out."));
 	}
 	
 	@PostMapping("/login/id={id}")
 	public ResponseEntity<?> login(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id, @RequestBody final CreateUser createUser) {
 		if(visitor.getUserId() != -1)
-			return ResponseEntity.badRequest().body("Logout before trying to log in as a new user.");
+			return ResponseEntity.badRequest().body(new JsonError("Logout before trying to log in as a new user."));
 		
 		final User user = this.userService.findById(id);
 		
 		if(user == null)
-			return ResponseEntity.badRequest().body("No user exists with id " + id + ".");
+			return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + id + "."));
 		if(!user.getPassword().equals(createUser.getPassword()))
-			return ResponseEntity.badRequest().body("Incorrect password for user " + id + ".");
+			return ResponseEntity.badRequest().body(new JsonError("Incorrect password for user " + id + "."));
 		
 		visitor.setUserId(user.getId());
 		return ResponseEntity.ok(new SendUserComplete(user));
@@ -101,7 +103,7 @@ public class UserController {
 	@PostMapping("/modify")
 	public ResponseEntity<?> modifyUser(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final ModifyUser modifyUser) {
 		if(visitor.getUserId() == -1)
-			return ResponseEntity.badRequest().body("Not logged in as a user.");
+			return ResponseEntity.badRequest().body(new JsonError("Not logged in as a user."));
 		
 		final User user = this.userService.findById(visitor.getUserId());
 		if(modifyUser.vaildFirstName())
@@ -119,7 +121,7 @@ public class UserController {
 	@PostMapping("/modify/decks")
 	public ResponseEntity<?> modifyUserDecks(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final ModifyUserDecks modifyDecks) {
 		if(visitor.getUserId() == -1)
-			return ResponseEntity.badRequest().body("Not logged in as a user.");
+			return ResponseEntity.badRequest().body(new JsonError("Not logged in as a user."));
 		
 		final User user = this.userService.findById(visitor.getUserId());
 		if(modifyDecks.validHeroDeck())
@@ -130,7 +132,7 @@ public class UserController {
 		if(modifyDecks.validHeroDeck() || modifyDecks.validVillianDeck())
 			return ResponseEntity.ok(new SendUserComplete(user));
 		else
-			return ResponseEntity.badRequest().body("No valid decks recieved.");
+			return ResponseEntity.badRequest().body(new JsonError("No valid decks recieved."));
 	}
 	
 	@PostMapping("/add")
@@ -141,9 +143,9 @@ public class UserController {
 			final User user = createUser.getUserObject();
 			
 			if(this.userService.findByUsername(user.getUsername()) != null)
-				return ResponseEntity.ok("Username must be unique.");
+				return ResponseEntity.ok(new JsonError("Username is already taken."));
 			if(this.userService.findByEmail(user.getEmail()) != null)
-				return ResponseEntity.ok("Email must be unique.");
+				return ResponseEntity.ok(new JsonError("Email is already taken."));
 			
 			final User dbUser = this.userService.insert(user);
 			visitor.setUserId(dbUser.getId());

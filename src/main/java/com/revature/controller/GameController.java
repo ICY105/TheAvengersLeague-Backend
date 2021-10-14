@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.revature.models.GameHandler;
 import com.revature.models.GameState;
+import com.revature.models.json_mapping.JsonError;
 import com.revature.models.json_mapping.SendGame;
 import com.revature.models.json_mapping.UserTurn;
 
@@ -26,7 +27,7 @@ public class GameController {
 	@GetMapping("/play")
 	public ResponseEntity<?> getGame(@ModelAttribute("visitor") final Visitor visitor) {
 		if(visitor.getUserId() == -1)
-			return ResponseEntity.badRequest().body("Not logged in.");
+			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
 		
 		final GameState game = this.handler.updateUser(visitor.getUser());
 		
@@ -37,14 +38,14 @@ public class GameController {
 	}
 
 	@PostMapping("/play")
-	public ResponseEntity<String> updateGame(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final UserTurn userTurn) {
+	public ResponseEntity<?> updateGame(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final UserTurn userTurn) {
 		if(visitor.getUserId() == -1)
-			return ResponseEntity.badRequest().body("Not logged in.");
+			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
 		
 		if(this.handler.setUserMove(visitor.getUser(), userTurn))
-			return ResponseEntity.ok("Set users next move.");
+			return ResponseEntity.ok(new JsonError("Set users next move."));
 		else
-			return ResponseEntity.ok("It is not your turn.");
+			return ResponseEntity.ok(new JsonError("It is not your turn."));
 	}
 
 }

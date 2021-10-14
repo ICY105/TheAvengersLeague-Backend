@@ -1,17 +1,20 @@
 package com.revature.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class GameCard {
+@EqualsAndHashCode(callSuper=true)
+public class GameCard extends GameObject {
+
+	public GameCard(final int x, final int y, final Card card, final EAffiliation affiliation) {
+		super(x, y, affiliation);
+		this.card = card;
+		
+		this.health = card.getDurability();
+	}
 	
-	private int id;
-	private int powerCost;
-	private String ability;
-	private String abilityDesc;
+	private Card card;
+	private int health;
 
 }

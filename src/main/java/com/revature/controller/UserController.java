@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.revature.models.User;
 import com.revature.models.json_mapping.CreateUser;
 import com.revature.models.json_mapping.ModifyUser;
+import com.revature.models.json_mapping.ModifyUserDecks;
 import com.revature.models.json_mapping.SendUser;
 import com.revature.models.json_mapping.SendUserComplete;
 import com.revature.models.json_mapping.SendUserDecks;
@@ -115,6 +116,23 @@ public class UserController {
 		return ResponseEntity.ok(new SendUserComplete(user));
 	}
 	
+	@PostMapping("/modify/decks")
+	public ResponseEntity<?> modifyUserDecks(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final ModifyUserDecks modifyDecks) {
+		if(visitor.getUserId() == -1)
+			return ResponseEntity.badRequest().body("Not logged in as a user.");
+		
+		final User user = this.userService.findById(visitor.getUserId());
+		if(modifyDecks.validHeroDeck())
+			user.setHeroDeck(modifyDecks.getHeroDeck());
+		if(modifyDecks.validVillianDeck())
+			user.setVillianDeck(modifyDecks.getVillianDeck());
+		
+		if(modifyDecks.validHeroDeck() || modifyDecks.validVillianDeck())
+			return ResponseEntity.ok(new SendUserComplete(user));
+		else
+			return ResponseEntity.badRequest().body("No valid decks recieved.");
+	}
+	
 	@PostMapping("/add")
 	public ResponseEntity<?> createUser(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final CreateUser createUser) {
 		final String validate = createUser.validate();
@@ -129,6 +147,7 @@ public class UserController {
 			
 			final User dbUser = this.userService.insert(user);
 			visitor.setUserId(dbUser.getId());
+			visitor.setUser(dbUser);
 			return ResponseEntity.ok(new SendUser(dbUser));
 			
 		} else {

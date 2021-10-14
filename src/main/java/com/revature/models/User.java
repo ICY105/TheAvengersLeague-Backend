@@ -1,7 +1,5 @@
 package com.revature.models;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -33,6 +32,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class User {
+
+	public static final int MINDECKSIZE = 5;
+	public static final int MAXDECKSIZE = 20;
 	
 	@Id
 	@Column(name = "user_id", nullable=false, unique=true, updatable=false)
@@ -65,22 +67,19 @@ public class User {
 	private Set<Integer> cards;
 	
 	@ElementCollection
-	@CollectionTable(name="hero_decks", joinColumns=@JoinColumn(name="user_id"))
+	@OrderColumn(name="hero_deck_pos")
 	@Column(name="hero_deck")
-	private List<Integer> heroDeck;
+	private int[] heroDeck;
 	
 	@ElementCollection
-	@CollectionTable(name="villian_decks", joinColumns=@JoinColumn(name="user_id"))
 	@Column(name="villian_deck")
-	private List<Integer> villianDeck;
+	@OrderColumn(name="villian_deck_pos")
+	private int[] villianDeck;
 	
 	public User() {
 		this.id = -1;
 
 		this.cards = new TreeSet<Integer>();
-		this.heroDeck = new LinkedList<>();
-		this.villianDeck = new LinkedList<>();
-		
 		this.fillStartingDecks();
 	}
 	
@@ -93,14 +92,25 @@ public class User {
 		this.email = email;
 
 		this.cards = new TreeSet<Integer>();
-		this.heroDeck = new LinkedList<>();
-		this.villianDeck = new LinkedList<>();
-		
 		this.fillStartingDecks();
 	}
 	
 	private void fillStartingDecks() {
 		//TODO: assign to default card inv and decks
+		this.heroDeck = new int[] { 
+				70, //batman
+				-1,
+				-1,
+				-1,
+				-1
+			};
+		this.villianDeck = new int[] { 
+				70, //batman
+				-2,
+				-2,
+				-2,
+				-2
+			};
 	}
 	
 }

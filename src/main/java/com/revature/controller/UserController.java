@@ -150,7 +150,7 @@ public class UserController {
 			final User dbUser = this.userService.insert(user);
 			visitor.setUserId(dbUser.getId());
 			visitor.setUser(dbUser);
-			return ResponseEntity.ok(new SendUser(dbUser));
+			return ResponseEntity.ok(new SendUserComplete(dbUser));
 			
 		} else {
 			return ResponseEntity.badRequest().body(validate);

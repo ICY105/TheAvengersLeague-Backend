@@ -16,6 +16,7 @@ import com.revature.models.User;
 import com.revature.models.json_mapping.CreateUser;
 import com.revature.models.json_mapping.JsonError;
 import com.revature.models.json_mapping.JsonStatus;
+import com.revature.models.json_mapping.LoginUser;
 import com.revature.models.json_mapping.ModifyUser;
 import com.revature.models.json_mapping.ModifyUserDecks;
 import com.revature.models.json_mapping.SendUser;
@@ -84,20 +85,33 @@ public class UserController {
 		return ResponseEntity.ok(new JsonStatus("Logged out."));
 	}
 	
-	@PostMapping("/login/id={id}")
-	public ResponseEntity<?> login(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id, @RequestBody final CreateUser createUser) {
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final LoginUser loginUser) {
 		if(visitor.getUserId() != -1)
 			return ResponseEntity.badRequest().body(new JsonError("Logout before trying to log in as a new user."));
 		
-		final User user = this.userService.findById(id);
-		
-		if(user == null)
-			return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + id + "."));
-		if(!user.getPassword().equals(createUser.getPassword()))
-			return ResponseEntity.badRequest().body(new JsonError("Incorrect password for user " + id + "."));
-		
-		visitor.setUserId(user.getId());
-		return ResponseEntity.ok(new SendUserComplete(user));
+		if(loginUser.getId() != 0) {
+			final User user = this.userService.findById(loginUser.getId());
+			
+			if(user == null)
+				return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + loginUser.getId() + "."));
+			if(!user.getPassword().equals(loginUser.getPassword()))
+				return ResponseEntity.badRequest().body(new JsonError("Incorrect password for user " + loginUser.getId() + "."));
+			
+			visitor.setUserId(user.getId());
+			return ResponseEntity.ok(new SendUserComplete(user));
+		} else if(loginUser.getUsername() != null) {
+			final User user = this.userService.findByUsername(loginUser.getPassword());
+			
+			if(user == null)
+				return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + loginUser.getUsername() + "."));
+			if(!user.getPassword().equals(loginUser.getPassword()))
+				return ResponseEntity.badRequest().body(new JsonError("Incorrect password for user " + loginUser.getUsername() + "."));
+			
+			visitor.setUserId(user.getId());
+			return ResponseEntity.ok(new SendUserComplete(user));
+		}
+		return ResponseEntity.badRequest().body(new JsonError("Invalid login json object."));
 	}
 	
 	@PostMapping("/modify")

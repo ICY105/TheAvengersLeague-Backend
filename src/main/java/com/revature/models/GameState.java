@@ -187,18 +187,16 @@ public class GameState {
 	
 	public boolean setTurn(final int id, final UserTurn moves) {
 		if(id == this.heros && this.heroTurn == null) {
-			if(validateTurn(moves, EAffiliation.Hero))
+			if(validateTurn(moves, EAffiliation.Hero)) {
 				this.heroTurn = moves;
-			else
-				return false;
-			return true;
+				return true;
+			}
 		}
 		if(id == this.villians && this.villianTurn == null) {
-			if(validateTurn(moves, EAffiliation.Villian))
+			if(validateTurn(moves, EAffiliation.Villian)) {
 				this.villianTurn = moves;
-			else
-				return false;
-			return true;
+				return true;
+			}
 		}
 		return false;
 	}

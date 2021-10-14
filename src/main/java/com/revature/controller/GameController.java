@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.revature.models.GameHandler;
 import com.revature.models.GameState;
 import com.revature.models.json_mapping.JsonError;
+import com.revature.models.json_mapping.JsonStatus;
 import com.revature.models.json_mapping.SendGame;
 import com.revature.models.json_mapping.UserTurn;
 
@@ -43,9 +44,9 @@ public class GameController {
 			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
 		
 		if(this.handler.setUserMove(visitor.getUser(), userTurn))
-			return ResponseEntity.ok(new JsonError("Set users next move."));
+			return ResponseEntity.ok(new JsonStatus("Set users next move."));
 		else
-			return ResponseEntity.ok(new JsonError("It is not your turn."));
+			return ResponseEntity.ok(new JsonError("Invalid move sequence."));
 	}
 
 }

@@ -386,9 +386,15 @@ public class GameState {
 		// damage = attack ^ ( 1.25 - intel/500)
 		//          ---------------------------
 		//                (combat + 1) / 20
-		final int damage = (int) (Math.pow(attack, 1.25 - (dIntel/500.0)) / ( (combat + 1.0)/20.0 ));
+		double damage = Math.pow(attack, 1.25 - (dIntel/500.0)) / ( (combat + 1.0)/20.0 );
 		
-		obj2.setHealth( obj2.getHealth() - damage);
+		damage *= obj1.getCombatModifier() + 1.0;
+		damage /= obj2.getCombatModifier() + 1.0;
+		
+		if(card2.getAbility() == EAbilities.Tough)
+			damage = damage * 0.75;
+		
+		obj2.setHealth( obj2.getHealth() - (int)damage);
 	}	
 	
 	private void rangedCombat(final int range, final GameCard attCard, final List<GameObject> list, final boolean multi) {

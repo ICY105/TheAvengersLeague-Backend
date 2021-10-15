@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class Card {
 	
 	private int id;
-	private int powerCost;
 	private EAbilities ability;
 	private EAffiliation affiliation;
 	
@@ -26,6 +25,10 @@ public class Card {
 			return 1;
 		else
 			return this.speed/25 + 1;
+	}
+	
+	public int getPowerCost() {
+		return ((this.intelligence + this.strength + this.speed + this.durability + this.power + this.combat)/60) + 1;
 	}
 
 }

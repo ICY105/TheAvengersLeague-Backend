@@ -10,9 +10,9 @@ public class CustomGameCard extends Card {
 	public CustomGameCard() {
 		super();
 	}
-	public CustomGameCard(final int id, final int powerCost, final EAbilities ability, final EAffiliation affiliation, final int intelligence, final int strength,
+	public CustomGameCard(final int id, final EAbilities ability, final EAffiliation affiliation, final int intelligence, final int strength,
 			final int speed, final int durability, final int power, final int combat, final String name, final String imageUrl) {
-		super(id, powerCost, ability, affiliation, intelligence, strength, speed, durability, power, combat);
+		super(id, ability, affiliation, intelligence, strength, speed, durability, power, combat);
 		
 		this.name = name;
 		this.imageUrl = imageUrl;

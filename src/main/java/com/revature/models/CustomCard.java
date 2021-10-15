@@ -2,17 +2,17 @@ package com.revature.models;
 
 import java.util.Objects;
 
-public class CustomGameCard extends Card {
+public class CustomCard extends Card {
 	
 	private String name;
 	private String imageUrl;
 	
-	public CustomGameCard() {
+	public CustomCard() {
 		super();
 	}
-	public CustomGameCard(final int id, final int powerCost, final EAbilities ability, final EAffiliation affiliation, final int intelligence, final int strength,
+	public CustomCard(final int id, final EAbilities ability, final EAffiliation affiliation, final int intelligence, final int strength,
 			final int speed, final int durability, final int power, final int combat, final String name, final String imageUrl) {
-		super(id, powerCost, ability, affiliation, intelligence, strength, speed, durability, power, combat);
+		super(id, ability, affiliation, intelligence, strength, speed, durability, power, combat);
 		
 		this.name = name;
 		this.imageUrl = imageUrl;
@@ -55,7 +55,7 @@ public class CustomGameCard extends Card {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final CustomGameCard other = (CustomGameCard) obj;
+		final CustomCard other = (CustomCard) obj;
 		return Objects.equals(this.imageUrl, other.imageUrl) && Objects.equals(this.name, other.name);
 	}
 	

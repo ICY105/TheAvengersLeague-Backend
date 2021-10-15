@@ -16,5 +16,11 @@ public class GameCard extends GameObject {
 	
 	private Card card;
 	private int health;
+	private float combatModifier = 0.0f;
+	private int lastCombat = 0;
+	
+	public void addCombatModifier(final float amount) {
+		this.combatModifier += amount;
+	}
 
 }

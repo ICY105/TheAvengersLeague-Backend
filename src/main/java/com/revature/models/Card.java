@@ -10,22 +10,25 @@ import lombok.NoArgsConstructor;
 public class Card {
 	
 	private int id;
-	private int powerCost;
 	private EAbilities ability;
 	private EAffiliation affiliation;
 	
-	private int intelligence;
-	private int strength;
-	private int speed;
-	private int durability;
-	private int power;
-	private int combat;
+	private int intelligence;	//reduces impact of stat differences
+	private int strength;		//affects base damage
+	private int speed;			//affects movement range
+	private int durability;		//affects max health
+	private int power;			//affects base damage
+	private int combat;			//ability to reduce damage
 	
 	public int getMovement() {
 		if(this.speed == 0)
 			return 1;
 		else
 			return this.speed/25 + 1;
+	}
+	
+	public int getPowerCost() {
+		return Math.max(1,((this.intelligence + this.strength + this.speed + this.durability + this.power + this.combat)/60));
 	}
 
 }

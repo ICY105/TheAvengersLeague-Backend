@@ -21,6 +21,7 @@ public class SendGame {
 	private int turn;
 	private int state;
 	private List<SendGameObject> gameBoard;
+	private List<String> events;
 	
 	private int power;
 	private SendCard[] hand;
@@ -29,6 +30,7 @@ public class SendGame {
 		this.turn = game.getTurn();
 		this.state = game.getState();
 		this.gameBoard = new LinkedList<SendGameObject>();
+		this.events = game.getEvents();
 		for(final Map.Entry<String, GameObject> entry: game.getGameBoard().entrySet()) {
 			this.gameBoard.add( new SendGameObject(entry.getValue()));
 		}
@@ -46,7 +48,7 @@ public class SendGame {
 		for(int i = 0; i < game.getHeroHand().length; i++) {
 			final Card card = cards.getCard(game.getHeroHand()[i]);
 			if(card != null)
-				this.hand[i] = new SendCard(card);
+				this.hand[i] = SendCard.getInstance(card);
 		}
 	}
 
@@ -57,7 +59,7 @@ public class SendGame {
 		for(int i = 0; i < game.getVillainHand().length; i++) {
 			final Card card = cards.getCard(game.getVillainHand()[i]);
 			if(card != null)
-				this.hand[i] = new SendCard(card);
+				this.hand[i] = SendCard.getInstance(card);
 		}
 	}
 	

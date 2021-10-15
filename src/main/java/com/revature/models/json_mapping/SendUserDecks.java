@@ -29,14 +29,14 @@ public class SendUserDecks {
 		
 		for(final int i: user.getHeroDeck()) {
 			try {
-				final SendCard card = new SendCard(cardBase.getCard(i));
+				final SendCard card = SendCard.getInstance(cardBase.getCard(i));
 				this.heroDeck.add(card);
 			} catch(final NoCardException e) {}
 		}
 		
 		for(final int i: user.getVillianDeck()) {
 			try {
-				final SendCard card = new SendCard(cardBase.getCard(i));
+				final SendCard card = SendCard.getInstance(cardBase.getCard(i));
 				this.villianDeck.add(card);
 			} catch(final NoCardException e) {}
 		}

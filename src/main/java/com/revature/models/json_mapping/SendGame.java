@@ -21,6 +21,7 @@ public class SendGame {
 	private int turn;
 	private int state;
 	private List<SendGameObject> gameBoard;
+	private List<String> events;
 	
 	private int power;
 	private SendCard[] hand;
@@ -29,6 +30,7 @@ public class SendGame {
 		this.turn = game.getTurn();
 		this.state = game.getState();
 		this.gameBoard = new LinkedList<SendGameObject>();
+		this.events = game.getEvents();
 		for(final Map.Entry<String, GameObject> entry: game.getGameBoard().entrySet()) {
 			this.gameBoard.add( new SendGameObject(entry.getValue()));
 		}

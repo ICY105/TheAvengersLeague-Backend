@@ -17,6 +17,7 @@ import lombok.Data;
 public class GameState {
 	
 	private static final int HANDSIZE = 3;
+	private static final int POWERPERTURN = 3;
 	private static final int BOARDSIZE = 11;
 	private static final int RADIUS = 6;
 
@@ -31,6 +32,7 @@ public class GameState {
 	private int turn;
 	private int state;
 	final Map<String,GameObject> gameBoard;
+	private List<String> events;
 	
 	private final int hero;
 	private int heroPower;
@@ -50,6 +52,7 @@ public class GameState {
 		this.turn = 0;
 		this.state = 0;
 		this.gameBoard = new HashMap<>();
+		this.events = new LinkedList<>();
 
 		this.hero = heros.getId();
 		this.heroPower = 3;
@@ -186,21 +189,11 @@ public class GameState {
 		return "valid";
 	}
 	
-	private boolean inBounds(final int x, final int y) {
-		if(x >= 0 && x < BOARDSIZE && y >= 0 && y < BOARDSIZE) {
-			final int half = BOARDSIZE/2 + 1;
-			if(Math.abs( (x-half) + (y-half) ) <= RADIUS)
-				return true;
-		}
-		return false;
-	}
 	
-	private boolean inRange(final GameCard card, final int x, final int y) {
-		final int distance = Math.abs(x - card.getX()) + Math.abs(y - card.getY());
-		return distance <= card.getCard().getMovement();
-	}
 	
 	private void nextTurn() {
+		
+		this.events = new LinkedList<>();
 		
 		//Apply hero turn
 		this.heroPower = this.heroTurn.getPower();
@@ -234,15 +227,217 @@ public class GameState {
 			}
 		}
 		
-		//combat
+		/**
+		 * unit updates
+		 */
 		
+		final List<GameObject> heroObjs = new LinkedList<>();
+		final List<GameObject> villainObjs = new LinkedList<>();
+		final List<GameObject> neutralObjs = new LinkedList<>();
 		
+		//seperate unit affiliations
+		for(final GameObject obj: this.gameBoard.values()) {
+			if(obj instanceof GameCard)
+				((GameCard) obj).setCombatModifier(0.0f);
+			
+			if(obj.getAffiliation() == EAffiliation.Hero)
+				heroObjs.add(obj);
+			if(obj.getAffiliation() == EAffiliation.Villain)
+				villainObjs.add(obj);
+			if(obj.getAffiliation() == EAffiliation.Neutral)
+				neutralObjs.add(obj);
+		}
+		
+		//pre-combat abilities
+		for(final GameObject obj: this.gameBoard.values()) {
+			if(obj instanceof GameCard) {
+				final GameCard card = (GameCard) obj;
+				
+				switch(card.getCard().getAbility()) {
+					case SupportHero:
+					case SupportVillain:
+						if(card.getAffiliation() == EAffiliation.Hero)
+							buffInRange(0.05f, 1, card, heroObjs);
+						else
+							buffInRange(0.05f, 1, card, villainObjs);
+						break;
+					case Preperation:
+						card.addCombatModifier( Math.max(3, card.getLastCombat() - this.turn) * 0.05f  );
+						break;
+					case Leader:
+						if(card.getAffiliation() == EAffiliation.Hero)
+							this.heroPower += 1;
+						else
+							this.villainPower += 1;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		
+		//do the combat
+		for(final GameObject heroObj: heroObjs) {
+			if(heroObj instanceof GameCard) {
+				final GameCard heroCard = (GameCard) heroObj;
+				for(final GameObject villainObj: villainObjs) {
+					if(villainObj instanceof GameCard) {
+						final GameCard villainCard = (GameCard) villainObj;
+						if(heroCard.getX() == villainCard.getY() && heroCard.getX() == villainCard.getY()) {
+							combat(heroCard, villainCard);
+							this.events.add(String.format( "combat:%d,%d,%s,%s", heroCard.getX(), heroCard.getY(), heroCard.getUuid(), villainCard.getUuid()) );
+							heroCard.setLastCombat(this.turn);
+							villainCard.setLastCombat(this.turn);
+						}
+					}
+				}
+			}
+		}
+		
+		//post-combat abilities
+		for(final GameObject obj: this.gameBoard.values()) {
+			
+			if(obj instanceof GameCard) {
+				final GameCard card = (GameCard) obj;
+				
+				List<GameObject> attList;
+				if(card.getAffiliation() == EAffiliation.Hero)
+					attList = villainObjs;
+				else
+					attList = heroObjs;
+				
+				switch(card.getCard().getAbility()) {
+					case Ranged1:
+						if(card.getLastCombat() != this.turn)
+							rangedCombat(1, card, attList, false);
+						break;
+					case Ranged2:
+						if(card.getLastCombat() != this.turn)
+							rangedCombat(2, card, attList, false);
+						break;
+					case MultiRanged1:
+						if(card.getLastCombat() != this.turn)
+							rangedCombat(1, card, attList, true);
+						break;
+					case MultiRanged2:
+						if(card.getLastCombat() != this.turn)
+							rangedCombat(2, card, attList, true);
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		
+		//remove dead cards
+		final List<GameObject> removals = new LinkedList<>();
+		for(final GameObject obj: this.gameBoard.values()) {
+			if(obj instanceof GameCard) {
+				final GameCard card = (GameCard) obj;
+				if(card.getHealth() < 0)
+					removals.add(card);
+			}
+		}
+		for(final GameObject remove: removals) {
+			this.gameBoard.remove(remove.getUuid());
+			if(remove instanceof GameCard) {
+				final GameCard card = (GameCard) remove;
+				final int id = card.getCard().getId();
+				if(remove.getAffiliation() == EAffiliation.Hero)
+					this.heroDeck.add(id);
+				if(remove.getAffiliation() == EAffiliation.Villain)
+					this.villainDeck.add(id);
+			}
+			if(remove instanceof CommanderGameCard) {
+				if(remove.getAffiliation() == EAffiliation.Hero)
+					this.state = this.villain;
+				if(remove.getAffiliation() == EAffiliation.Villain)
+					this.state = this.hero;
+			}
+		}
 		
 		//next turn
 		this.turn += 1;
+		
 		this.heroTurn = null;
+		this.heroPower += POWERPERTURN;
+		drawCards(this.heroHand, this.heroDeck);
+		
 		this.villainTurn = null;
+		this.villainPower += POWERPERTURN;
+		drawCards(this.villainHand, this.villainDeck);
 	}
+	
+	
+	
+	private void combat(final GameCard obj1, final GameCard obj2) {
+		attack(obj1,obj2);
+		attack(obj2,obj1);
+	}
+	
+	private void attack(final GameCard obj1, final GameCard obj2) {
+		final Card card1 = obj1.getCard();
+		final Card card2 = obj2.getCard();
+		
+		final double dIntel = card2.getIntelligence() - card1.getIntelligence();
+		final double combat = card2.getCombat();
+		final double attack = card1.getStrength() + card1.getPower();
+		
+		// damage = attack ^ ( 1.25 - intel/500)
+		//          ---------------------------
+		//                (combat + 1) / 20
+		final int damage = (int) (Math.pow(attack, 1.25 - (dIntel/500.0)) / ( (combat + 1.0)/20.0 ));
+		
+		obj2.setHealth( obj2.getHealth() - damage);
+	}	
+	
+	private void rangedCombat(final int range, final GameCard attCard, final List<GameObject> list, final boolean multi) {
+		for(final GameObject obj: list) {
+			if(obj instanceof GameCard) {
+				final GameCard defCard = (GameCard) obj;
+				if(inRangeNotEqual(range, attCard.getX(), attCard.getY(), defCard.getX(), defCard.getY()) ) {
+					attack(attCard, defCard);
+					this.events.add(String.format( "ranged-combat:%d,%d,%d,%d,%s,%s", attCard.getX(), attCard.getY(), defCard.getX(), defCard.getY(), attCard.getUuid(), defCard.getUuid()));
+					if(multi)
+						break;
+				}
+			}
+		}
+	}
+	
+	private boolean inRange(final GameCard card, final int x, final int y) {
+		final int distance = Math.abs(x - card.getX()) + Math.abs(y - card.getY());
+		return distance <= card.getCard().getMovement();
+	}
+	
+	private boolean inRangeNotEqual(final int radius, final int x1, final int y1, final int x2, final int y2) {
+		if(x1 == x2 && y1 == y2)
+			return false;
+		final int distance = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+		return distance <= radius;
+	}
+	
+	private boolean inBounds(final int x, final int y) {
+		if(x >= 0 && x < BOARDSIZE && y >= 0 && y < BOARDSIZE) {
+			final int half = BOARDSIZE/2 + 1;
+			if(Math.abs( (x-half) + (y-half) ) <= RADIUS)
+				return true;
+		}
+		return false;
+	}
+
+	private void buffInRange(final float amount, final int radius, final GameObject card, final List<GameObject> list) {
+		for(final GameObject obj: list) {
+			if(obj instanceof GameCard) {
+				if(inRangeNotEqual(radius,card.getX(),card.getY(),obj.getX(),obj.getY()))
+					((GameCard) obj).addCombatModifier(amount);
+			}
+		}
+	}
+	
+	
+	
+	
 
 	public synchronized void update() {
 		if(this.heroTurn != null && this.villainTurn != null)

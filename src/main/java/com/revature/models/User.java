@@ -97,6 +97,9 @@ public class User {
 	
 	private void fillStartingDecks() {
 		//TODO: assign to default card inv and decks
+		this.cards.add(-1);
+		this.cards.add(-2);
+		this.cards.add(70);
 		this.heroDeck = new int[] { 
 				70, //batman
 				-1,

@@ -16,7 +16,6 @@ public class CardRegistry {
 	private final Map<Integer,Card> cards;
 	
 	public CardRegistry() {
-		System.out.println("Init card database");
 		this.cards = new HashMap<>();
 		initCards();
 	}
@@ -31,8 +30,8 @@ public class CardRegistry {
 	}
 	
 	private void initCards() {
-		this.cards.put(-1, new CustomGameCard(-1, 3, EAbilities.SupportHero, 25, 25, 25, 25, 25, 25, "Police Officer",""));
-		this.cards.put(-2, new CustomGameCard(-2, 3, EAbilities.SupportVillian, 25, 25, 25, 25, 25, 25, "Henceman",""));
-		this.cards.put(70, new Card(70, 3, EAbilities.Preperation, 100, 26, 27, 50, 47, 100));
+		this.cards.put(-1, new CustomGameCard(-1, 3, EAbilities.SupportHero, EAffiliation.Hero, 25, 25, 25, 25, 25, 25, "Police Officer",""));
+		this.cards.put(-2, new CustomGameCard(-2, 3, EAbilities.SupportVillain, EAffiliation.Villain, 25, 25, 25, 25, 25, 25, "Henceman",""));
+		this.cards.put(70, new Card(70, 3, EAbilities.Preperation, EAffiliation.Hero, 100, 26, 27, 50, 47, 100));
 	}
 }

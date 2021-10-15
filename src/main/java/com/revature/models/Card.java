@@ -12,6 +12,7 @@ public class Card {
 	private int id;
 	private int powerCost;
 	private EAbilities ability;
+	private EAffiliation affiliation;
 	
 	private int intelligence;
 	private int strength;

@@ -33,9 +33,9 @@ public class SendGame {
 			this.gameBoard.add( new SendGameObject(entry.getValue()));
 		}
 		
-		if(userId == game.getHeros())
+		if(userId == game.getHero())
 			initHero(game);
-		else if(userId == game.getVillians())
+		else if(userId == game.getVillain())
 			initVillian(game);
 	}
 
@@ -52,10 +52,10 @@ public class SendGame {
 
 	private void initVillian(final GameState game) {
 		final CardRegistry cards = CardRegistry.getInstance();
-		this.power = game.getVillianPower();
-		this.hand = new SendCard[game.getVillianHand().length];
-		for(int i = 0; i < game.getVillianHand().length; i++) {
-			final Card card = cards.getCard(game.getVillianHand()[i]);
+		this.power = game.getVillainPower();
+		this.hand = new SendCard[game.getVillainHand().length];
+		for(int i = 0; i < game.getVillainHand().length; i++) {
+			final Card card = cards.getCard(game.getVillainHand()[i]);
 			if(card != null)
 				this.hand[i] = new SendCard(card);
 		}

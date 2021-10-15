@@ -13,5 +13,9 @@ public class GameObjectMoves {
 	int id;
 	int x;
 	int y;
+	
+	public boolean hasUuid() {
+		return this.uuid != null && this.uuid.length() >= 32 && this.uuid.length() <= 36;
+	}
 
 }

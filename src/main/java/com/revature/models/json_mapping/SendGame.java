@@ -48,7 +48,7 @@ public class SendGame {
 		for(int i = 0; i < game.getHeroHand().length; i++) {
 			final Card card = cards.getCard(game.getHeroHand()[i]);
 			if(card != null)
-				this.hand[i] = new SendCard(card);
+				this.hand[i] = SendCard.getInstance(card);
 		}
 	}
 
@@ -59,7 +59,7 @@ public class SendGame {
 		for(int i = 0; i < game.getVillainHand().length; i++) {
 			final Card card = cards.getCard(game.getVillainHand()[i]);
 			if(card != null)
-				this.hand[i] = new SendCard(card);
+				this.hand[i] = SendCard.getInstance(card);
 		}
 	}
 	

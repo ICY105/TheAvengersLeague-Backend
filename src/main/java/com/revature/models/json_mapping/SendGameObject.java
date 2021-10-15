@@ -22,7 +22,7 @@ public class SendGameObject {
 		this.type = "GameObject";
 		
 		if(obj instanceof GameCard) {
-			this.card = new SendCard( ((GameCard) obj).getCard() );
+			this.card = SendCard.getInstance( ((GameCard) obj).getCard() );
 			this.health = ((GameCard) obj).getHealth();
 			this.type = "GameCard";
 			

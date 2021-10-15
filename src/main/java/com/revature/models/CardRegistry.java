@@ -31,7 +31,7 @@ public class CardRegistry {
 	
 	private void initCards() {
 		this.cards.put(-1, new CustomCard(-1, EAbilities.SupportHero,    EAffiliation.Hero,    18, 18, 18, 18, 18, 18, "Police Officer","https://www.pngfind.com/pngs/m/66-665071_police-officer-police-officer-png-transparent-png.png"));
-		this.cards.put(-2, new CustomCard(-2, EAbilities.SupportVillain, EAffiliation.Villain, 18, 18, 18, 18, 18, 18, "Henceman","http://player.98fm.com/content/000/images/000095/97723_54_news_hub_93274_656x500.jpg"));
+		this.cards.put(-2, new CustomCard(-2, EAbilities.SupportVillain, EAffiliation.Villain, 18, 18, 18, 18, 18, 18, "Henchman","http://player.98fm.com/content/000/images/000095/97723_54_news_hub_93274_656x500.jpg"));
 		
 		this.cards.put(70,  new Card(70,  EAbilities.Preperation, EAffiliation.Hero, 100, 26,  27,  50,  47,  100));
 		this.cards.put(149, new Card(149, EAbilities.Leader,      EAffiliation.Hero, 69,  19,  38,  55,  60,  100));

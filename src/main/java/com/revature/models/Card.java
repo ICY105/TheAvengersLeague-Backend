@@ -28,7 +28,7 @@ public class Card {
 	}
 	
 	public int getPowerCost() {
-		return ((this.intelligence + this.strength + this.speed + this.durability + this.power + this.combat)/60) + 1;
+		return Math.max(1,((this.intelligence + this.strength + this.speed + this.durability + this.power + this.combat)/60));
 	}
 
 }

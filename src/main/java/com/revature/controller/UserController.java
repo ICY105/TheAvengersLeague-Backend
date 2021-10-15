@@ -96,7 +96,7 @@ public class UserController {
 			if(user == null)
 				return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + loginUser.getId() + "."));
 			if(!user.getPassword().equals(loginUser.getPassword()))
-				return ResponseEntity.badRequest().body(new JsonError("Incorrect password for user " + loginUser.getId() + "."));
+				return ResponseEntity.ok().body(new JsonError("Incorrect password for user " + loginUser.getId() + "."));
 			
 			visitor.setUserId(user.getId());
 			return ResponseEntity.ok(new SendUserComplete(user));
@@ -106,7 +106,7 @@ public class UserController {
 			if(user == null)
 				return ResponseEntity.badRequest().body(new JsonError("No user exists with username " + loginUser.getUsername() + "."));
 			if(!user.getPassword().equals(loginUser.getPassword()))
-				return ResponseEntity.badRequest().body(new JsonError("Incorrect password for user " + loginUser.getUsername() + "."));
+				return ResponseEntity.ok().body(new JsonError("Incorrect password for user " + loginUser.getUsername() + "."));
 			
 			visitor.setUserId(user.getId());
 			return ResponseEntity.ok(new SendUserComplete(user));

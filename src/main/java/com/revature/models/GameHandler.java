@@ -76,15 +76,15 @@ public class GameHandler implements Runnable {
 	 * @param moves List of objects to update
 	 * @return if the move was set
 	 */
-	public boolean setUserMove(final User user, final UserTurn moves) {
+	public String setUserMove(final User user, final UserTurn moves) {
 		if(!this.active)
-			return false;
+			return null;
 		
 		if(this.userGame.containsKey(user.getId())) {
 			final GameState game = this.userGame.get(user.getId());
 			return game.setTurn(user.getId(), moves);
 		}
-		return false;
+		return "not in a game";
 	}
 	
 	/**

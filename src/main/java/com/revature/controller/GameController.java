@@ -32,10 +32,14 @@ public class GameController {
 		
 		final GameState game = this.handler.updateUser(visitor.getUser());
 		
-		if(game == null)
-			return ResponseEntity.ok("In queue.");
-		else
-			return ResponseEntity.ok(new SendGame(visitor.getUserId(),game));
+		if(game == null) {
+			return ResponseEntity.ok(new JsonStatus("In queue."));
+		} else {
+			if(game.needUpdate(visitor.getUserId()))
+				return ResponseEntity.ok(new SendGame(visitor.getUserId(),game));
+			else
+				return ResponseEntity.ok(new JsonStatus("no update"));
+		}
 	}
 
 	@PostMapping("/play")
@@ -43,10 +47,11 @@ public class GameController {
 		if(visitor.getUserId() == -1)
 			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
 		
-		if(this.handler.setUserMove(visitor.getUser(), userTurn))
+		final String response = this.handler.setUserMove(visitor.getUser(), userTurn);
+		if(response.equals("valid"))
 			return ResponseEntity.ok(new JsonStatus("Set users next move."));
 		else
-			return ResponseEntity.ok(new JsonError("Invalid move sequence."));
+			return ResponseEntity.ok(new JsonError(response));
 	}
 
 }

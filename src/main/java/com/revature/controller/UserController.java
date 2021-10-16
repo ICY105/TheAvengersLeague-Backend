@@ -162,10 +162,15 @@ public class UserController {
 	
 	@PostMapping("/add")
 	public ResponseEntity<?> createUser(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final CreateUser createUser) {
+		if(visitor.getUserId() > -1)
+			return ResponseEntity.badRequest().body(new JsonError("Log out before trying to create a new account."));
+		
 		final String validate = createUser.validate();
 		
 		if(validate.equals("valid")) {
 			final User user = createUser.getUserObject();
+			
+			System.out.println("Valid: " + user.toString());
 			
 			if(this.userService.findByUsername(user.getUsername()) != null)
 				return ResponseEntity.ok(new JsonError("username is already taken"));

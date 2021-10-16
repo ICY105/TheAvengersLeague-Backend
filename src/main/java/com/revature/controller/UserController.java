@@ -34,6 +34,17 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@GetMapping("/get")
+	public ResponseEntity<?> get(@ModelAttribute("visitor") final Visitor visitor) {
+		if(visitor.getUserId() == -1)
+			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
+		
+		final User user = this.userService.findById(visitor.getUserId());
+		if(user == null)
+			return ResponseEntity.badRequest().body(new JsonError("No user exists with id " + visitor.getUserId() + "... somehow."));
+		return ResponseEntity.ok(new SendUserComplete(user));
+	}
+	
 	@GetMapping("/id={id}")
 	public ResponseEntity<?> findById(@ModelAttribute("visitor") final Visitor visitor, @PathVariable("id") final int id) {
 		final User user = this.userService.findById(id);
@@ -82,14 +93,12 @@ public class UserController {
 			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
 		
 		visitor.setUserId(-1);
+		visitor.setUser(null);
 		return ResponseEntity.ok(new JsonStatus("Logged out."));
 	}
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final LoginUser loginUser) {
-		if(visitor.getUserId() != -1)
-			return ResponseEntity.badRequest().body(new JsonError("Logout before trying to log in as a new user."));
-		
 		if(loginUser.getId() != 0) {
 			final User user = this.userService.findById(loginUser.getId());
 			

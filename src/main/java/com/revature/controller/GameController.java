@@ -20,7 +20,7 @@ import com.revature.models.json_mapping.UserTurn;
 @RestController
 @SessionAttributes("visitor")
 @RequestMapping("/game")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class GameController {
 	
 	private final GameHandler handler = GameHandler.getInstance();

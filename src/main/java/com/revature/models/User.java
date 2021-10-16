@@ -108,7 +108,7 @@ public class User {
 		this.cards.add(370);
 		this.cards.add(204);
 		this.cards.add(423);
-		this.cards.add(70);
+		this.cards.add(680);
 		
 		this.heroDeck = new int[] {
 				149,

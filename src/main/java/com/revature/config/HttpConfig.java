@@ -16,7 +16,7 @@ public class HttpConfig {
 
 	@EventListener
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
-		final DefaultCookieSerializer cookieSerializer = applicationContext.getBean(DefaultCookieSerializer.class);
+		final DefaultCookieSerializer cookieSerializer = this.applicationContext.getBean(DefaultCookieSerializer.class);
 		System.out.println("Received DefaultCookieSerializer, Overriding SameSite Strict");
 		cookieSerializer.setSameSite("None");
 	}

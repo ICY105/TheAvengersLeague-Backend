@@ -7,13 +7,13 @@ import com.revature.exceptions.NoCardException;
 
 public class CardRegistry {
 	
-	private static final CardRegistry CustomCardBase = new CardRegistry();;
+	private static final CardRegistry cardBase = new CardRegistry();;
 	
 	public static CardRegistry getInstance() {
-		return CustomCardBase;
+		return cardBase;
 	}
 	
-	private final Map<Integer,CustomCard> cards;
+	private final Map<Integer,Card> cards;
 	
 	public CardRegistry() {
 		this.cards = new HashMap<>();

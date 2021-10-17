@@ -60,7 +60,7 @@ public class GameController {
 		if(visitor.getUserId() == -1)
 			return ResponseEntity.badRequest().body(new JsonError("not logged in"));
 		this.handler.leaveGame(visitor.getUserId());
-		return ResponseEntity.ok(new JsonStatus("Left all games a queues."));
+		return ResponseEntity.ok(new JsonStatus("left all games and queues"));
 	}
 
 	@PostMapping("/play")

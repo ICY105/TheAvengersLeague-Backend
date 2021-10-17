@@ -9,7 +9,8 @@ public enum EAbilities {
 	Ranged2			("Ranged 2",		"Can attack enemies 2 spaces away."),
 	MultiRanged1	("Multi-Ranged 1",	"Attacks all enemies 1 space away."),
 	MultiRanged2	("Multi-Ranged 2",	"Attacks all enemies 2 spaces away."),
-	Tough	        ("Tough",	        "-25% damage taken from combat.");
+	Tough	        ("Tough",	        "-25% damage taken from combat."),
+	None			("None", 			"No Ability");
 	
 	private final String name;
 	private final String desc;

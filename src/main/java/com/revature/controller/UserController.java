@@ -148,16 +148,20 @@ public class UserController {
 		if(visitor.getUserId() == -1)
 			return ResponseEntity.badRequest().body(new JsonError("not logged in as a user"));
 		
+		System.out.println(modifyDecks);
+		
 		final User user = this.userService.findById(visitor.getUserId());
 		if(modifyDecks.validHeroDeck())
 			user.setHeroDeck(modifyDecks.getHeroDeck());
 		if(modifyDecks.validVillianDeck())
 			user.setVillianDeck(modifyDecks.getVillianDeck());
 		
-		if(modifyDecks.validHeroDeck() || modifyDecks.validVillianDeck())
+		if(modifyDecks.validHeroDeck() || modifyDecks.validVillianDeck()) {
+			this.userService.insert(user);
 			return ResponseEntity.ok(new SendUserComplete(user));
-		else
+		} else {
 			return ResponseEntity.badRequest().body(new JsonError("no valid decks recieved"));
+		}
 	}
 	
 	@PostMapping("/add")

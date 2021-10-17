@@ -33,7 +33,7 @@ public class GameController {
 		final GameState game = this.handler.updateUser(visitor.getUser());
 		
 		if(game == null) {
-			return ResponseEntity.ok(new JsonStatus("In queue."));
+			return ResponseEntity.ok(new JsonStatus("in queue"));
 		} else {
 			if(game.needUpdate(visitor.getUserId()))
 				return ResponseEntity.ok(new SendGame(visitor.getUserId(),game));
@@ -45,11 +45,11 @@ public class GameController {
 	@GetMapping("/play-force")
 	public ResponseEntity<?> getGameForce(@ModelAttribute("visitor") final Visitor visitor) {
 		if(visitor.getUserId() == -1)
-			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
+			return ResponseEntity.badRequest().body(new JsonError("not logged in"));
 		
 		final GameState game = this.handler.updateUser(visitor.getUser());
 		if(game == null) {
-			return ResponseEntity.ok(new JsonStatus("In queue."));
+			return ResponseEntity.ok(new JsonStatus("in queue"));
 		} else {
 			return ResponseEntity.ok(new SendGame(visitor.getUserId(),game));
 		}
@@ -58,11 +58,11 @@ public class GameController {
 	@PostMapping("/play")
 	public ResponseEntity<?> updateGame(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final UserTurn userTurn) {
 		if(visitor.getUserId() == -1)
-			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
+			return ResponseEntity.badRequest().body(new JsonError("not logged in"));
 		
 		final String response = this.handler.setUserMove(visitor.getUser(), userTurn);
 		if(response.equals("valid"))
-			return ResponseEntity.ok(new JsonStatus("Set users next move."));
+			return ResponseEntity.ok(new JsonStatus("set users next move"));
 		else
 			return ResponseEntity.ok(new JsonError(response));
 	}

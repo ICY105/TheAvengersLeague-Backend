@@ -42,6 +42,19 @@ public class GameController {
 		}
 	}
 
+	@GetMapping("/play-force")
+	public ResponseEntity<?> getGameForce(@ModelAttribute("visitor") final Visitor visitor) {
+		if(visitor.getUserId() == -1)
+			return ResponseEntity.badRequest().body(new JsonError("Not logged in."));
+		
+		final GameState game = this.handler.updateUser(visitor.getUser());
+		if(game == null) {
+			return ResponseEntity.ok(new JsonStatus("In queue."));
+		} else {
+			return ResponseEntity.ok(new SendGame(visitor.getUserId(),game));
+		}
+	}
+
 	@PostMapping("/play")
 	public ResponseEntity<?> updateGame(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final UserTurn userTurn) {
 		if(visitor.getUserId() == -1)

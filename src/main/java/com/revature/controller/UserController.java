@@ -108,6 +108,7 @@ public class UserController {
 				return ResponseEntity.badRequest().body(new JsonError("incorrect password for user " + loginUser.getId()));
 			
 			visitor.setUserId(user.getId());
+			visitor.setUser(user);
 			return ResponseEntity.ok(new SendUserComplete(user));
 		} else if(loginUser.getUsername() != null) {
 			final User user = this.userService.findByUsername(loginUser.getUsername());
@@ -118,6 +119,7 @@ public class UserController {
 				return ResponseEntity.badRequest().body(new JsonError("incorrect password for user " + loginUser.getUsername()));
 			
 			visitor.setUserId(user.getId());
+			visitor.setUser(user);
 			return ResponseEntity.ok(new SendUserComplete(user));
 		}
 		return ResponseEntity.badRequest().body(new JsonError("invalid login json object"));
@@ -140,7 +142,9 @@ public class UserController {
 		if(modifyUser.vaildPasswordName())
 			user.setPassword(modifyUser.getNewPassword());
 		
-		return ResponseEntity.ok(new SendUserComplete(user));
+		final User dbUser = this.userService.insert(user);
+		visitor.setUser(dbUser);
+		return ResponseEntity.ok(new SendUserComplete(dbUser));
 	}
 	
 	@PostMapping("/modify/decks")
@@ -157,8 +161,9 @@ public class UserController {
 			user.setVillianDeck(modifyDecks.getVillianDeck());
 		
 		if(modifyDecks.validHeroDeck() || modifyDecks.validVillianDeck()) {
-			this.userService.insert(user);
-			return ResponseEntity.ok(new SendUserComplete(user));
+			final User dbUser = this.userService.insert(user);
+			visitor.setUser(dbUser);
+			return ResponseEntity.ok(new SendUserComplete(dbUser));
 		} else {
 			return ResponseEntity.badRequest().body(new JsonError("no valid decks recieved"));
 		}

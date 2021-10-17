@@ -16,8 +16,7 @@ public class GameHandler implements Runnable {
 		return QUEUEHANDLER;
 	}
 	
-	//TODO: reduce timeout for production
-	private static final int TIMEOUT = 60000;
+	private static final int TIMEOUT = 15000;
 	
 	private boolean active;
 
@@ -94,7 +93,7 @@ public class GameHandler implements Runnable {
 		this.active = false;
 	}
 	
-	private synchronized void leaveGame(final int id) {
+	public synchronized void leaveGame(final int id) {
 		if(this.times.containsKey(id))
 			this.times.remove(id);
 		if(this.gameQueue.contains(id))

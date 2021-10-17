@@ -55,6 +55,14 @@ public class GameController {
 		}
 	}
 
+	@GetMapping("/leave")
+	public ResponseEntity<?> leaveGame(@ModelAttribute("visitor") final Visitor visitor) {
+		if(visitor.getUserId() == -1)
+			return ResponseEntity.badRequest().body(new JsonError("not logged in"));
+		this.handler.leaveGame(visitor.getUserId());
+		return ResponseEntity.ok(new JsonStatus("Left all games a queues."));
+	}
+
 	@PostMapping("/play")
 	public ResponseEntity<?> updateGame(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final UserTurn userTurn) {
 		if(visitor.getUserId() == -1)

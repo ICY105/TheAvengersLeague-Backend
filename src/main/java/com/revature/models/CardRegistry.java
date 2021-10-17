@@ -20,7 +20,7 @@ public class CardRegistry {
 		initCards();
 	}
 	
-	public Card getCustomCard(final int id) {
+	public Card getCard(final int id) {
 		if(id == 0)
 			return null;
 		if(this.cards.containsKey(id))

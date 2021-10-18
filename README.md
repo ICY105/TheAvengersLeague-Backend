@@ -24,6 +24,9 @@ AWS Codepipeline and Elastic Beanstalk for deployment
 
 ## Contributors
 Michael Weathery
+
 John Pham
+
 Sevastian Villegas
+
 Noah Gaston

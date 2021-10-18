@@ -186,15 +186,15 @@ public class UserController {
 		final String validate = createUser.validate();
 		
 		if(validate.equals("valid")) {
+			final User existingUsername = this.userService.findByUsername(createUser.getUsername());
+			if(existingUsername != null)
+				return ResponseEntity.badRequest().body(new JsonError("Username is taken"));
+			
+			final User existingEmail = this.userService.findByEmail(createUser.getEmail());
+			if(existingEmail != null)
+				return ResponseEntity.badRequest().body(new JsonError("Email is taken"));
+			
 			final User user = createUser.getUserObject();
-			
-			System.out.println("Valid: " + user.toString());
-			
-			if(this.userService.findByUsername(user.getUsername()) != null)
-				return ResponseEntity.ok(new JsonError("username is already taken"));
-			if(this.userService.findByEmail(user.getEmail()) != null)
-				return ResponseEntity.ok(new JsonError("email is already taken"));
-			
 			final User dbUser = this.userService.insert(user);
 			visitor.setUserId(dbUser.getId());
 			visitor.setUser(dbUser);

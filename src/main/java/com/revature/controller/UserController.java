@@ -99,6 +99,14 @@ public class UserController {
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final LoginUser loginUser) {
+		try {
+			this.userService.insert(new User("test", "test", "test", "test", "test@test.com"));
+		} catch(final Exception e) {}
+		try {
+			this.userService.insert(new User("test1", "test1", "test1", "test1", "test1@test.com"));
+		} catch(final Exception e) {}
+		
+		
 		if(loginUser.getId() != 0) {
 			final User user = this.userService.findById(loginUser.getId());
 			
@@ -171,6 +179,7 @@ public class UserController {
 	
 	@PostMapping("/add")
 	public ResponseEntity<?> createUser(@ModelAttribute("visitor") final Visitor visitor, @RequestBody final CreateUser createUser) {
+		
 		if(visitor.getUserId() > -1)
 			return ResponseEntity.badRequest().body(new JsonError("Log out before trying to create a new account."));
 		

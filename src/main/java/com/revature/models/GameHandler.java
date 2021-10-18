@@ -117,9 +117,7 @@ public class GameHandler implements Runnable {
 				final int user = set.getKey();
 				final long lastResponse = set.getValue();
 				
-				final GameState game = this.userGame.get(user);
-				
-				if(time - lastResponse > TIMEOUT || (game != null && game.hasWinner()))
+				if(time - lastResponse > TIMEOUT)
 					leaveGame.add(user);
 			}
 			for(final int user: leaveGame)
@@ -158,10 +156,11 @@ public class GameHandler implements Runnable {
 			//update games
 			final List<GameState> remove = new LinkedList<GameState>();
 			for(final GameState game: this.games) {
-				if(game.hasWinner()) {
+				if(!this.userGame.containsKey(game.getHero()) && !this.userGame.containsKey(game.getHero())) {
 					remove.add(game);
+				} else if(!game.hasWinner()) {
+					game.update();
 				}
-				game.update();
 			}
 			synchronized(this) {
 				this.games.removeAll(remove);

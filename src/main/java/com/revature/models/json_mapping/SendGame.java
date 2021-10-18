@@ -20,6 +20,7 @@ public class SendGame {
 	
 	private int turn;
 	private int state;
+	private String affiliation;
 	private List<SendGameObject> gameBoard;
 	private List<String> events;
 	
@@ -42,6 +43,7 @@ public class SendGame {
 	}
 
 	private void initHero(final GameState game) {
+		this.affiliation = "hero";
 		final CardRegistry cards = CardRegistry.getInstance();
 		this.power = game.getHeroPower();
 		this.hand = new SendCard[game.getHeroHand().length];
@@ -53,6 +55,7 @@ public class SendGame {
 	}
 
 	private void initVillian(final GameState game) {
+		this.affiliation = "villain";
 		final CardRegistry cards = CardRegistry.getInstance();
 		this.power = game.getVillainPower();
 		this.hand = new SendCard[game.getVillainHand().length];

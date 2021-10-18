@@ -96,19 +96,9 @@ public class User {
 	}
 	
 	private void fillStartingDecks() {
-		//TODO: assign to default card inv and decks
-		this.cards.add(-1);
-		this.cards.add(-2);
-		
-		this.cards.add(70);
-		this.cards.add(149);
-		this.cards.add(346);
-		this.cards.add(644);
-		
-		this.cards.add(370);
-		this.cards.add(204);
-		this.cards.add(423);
-		this.cards.add(680);
+		for(final int id: CardRegistry.getInstance().getAllCards().keySet()) {
+			this.cards.add(id);
+		}
 		
 		this.heroDeck = new int[] {
 				149,

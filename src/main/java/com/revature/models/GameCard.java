@@ -23,4 +23,12 @@ public class GameCard extends GameObject {
 		this.combatModifier += amount;
 	}
 
+	@Override
+	public String toString() {
+		return "GameCard [pos= (" + this.x + ":" + this.y + ") card=" + card + ", health=" + health + ", combatModifier=" + combatModifier + ", lastCombat="
+				+ lastCombat + "]";
+	}
+	
+	
+
 }

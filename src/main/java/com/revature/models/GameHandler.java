@@ -117,16 +117,13 @@ public class GameHandler implements Runnable {
 				final int user = set.getKey();
 				final long lastResponse = set.getValue();
 				
-				final GameState game = this.userGame.get(user);
-				
-				if(time - lastResponse > TIMEOUT || (game != null && game.hasWinner()))
+				if(time - lastResponse > TIMEOUT)
 					leaveGame.add(user);
 			}
 			for(final int user: leaveGame)
 				leaveGame(user);
 			
 			//start a game if 2 people are queued
-			/*
 			while(this.gameQueue.size() >= 2) {
 				final int heros = this.gameQueue.poll();
 				if(heros != this.gameQueue.peek()) {
@@ -143,29 +140,27 @@ public class GameHandler implements Runnable {
 					}
 				}
 			}
-			*/
 			
-			//TODO: replace testing method
-			
-			//start a game if 2 people are queued
+			/*
+			//start a game if 1 person is queued (for testing)
 			while(this.gameQueue.peek() != null) {
 				final int heros = this.gameQueue.poll();
-					
-				System.out.println("Start game: " + heros);
 				
 				final User villians = new User();
 				final GameState game = new GameState(this.users.get(heros), villians);
 				this.games.add(game);
 				this.userGame.put(heros, game);
 			}
+			*/
 			
 			//update games
 			final List<GameState> remove = new LinkedList<GameState>();
 			for(final GameState game: this.games) {
-				if(game.hasWinner()) {
+				if(!this.userGame.containsKey(game.getHero()) && !this.userGame.containsKey(game.getHero())) {
 					remove.add(game);
+				} else if(!game.hasWinner()) {
+					game.update();
 				}
-				game.update();
 			}
 			synchronized(this) {
 				this.games.removeAll(remove);

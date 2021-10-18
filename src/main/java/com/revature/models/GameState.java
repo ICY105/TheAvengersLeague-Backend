@@ -61,17 +61,19 @@ public class GameState {
 		this.heroDeck = randomizeDeck(heros.getHeroDeck());
 		drawCards(this.heroHand, this.heroDeck);
 		this.heroTurn = null;
-		final GameObject startingHero = new CommanderGameCard(STARTHEROX, STARTHEROY, this.cards.getCard(heros.getHeroDeck()[0]), EAffiliation.Hero);
+		final CommanderGameCard startingHero = new CommanderGameCard(STARTHEROX, STARTHEROY, this.cards.getCard(heros.getHeroDeck()[0]), EAffiliation.Hero);
+		startingHero.setHealth( startingHero.getHealth() * 2 );
 		this.gameBoard.put(startingHero.getUuid(), startingHero);
 
 		this.villain = villians.getId();
 		this.villainPower = 3;
-		this.villainPower = -1;
+		this.heroUpdate = -1;
 		this.villainHand = new int[HANDSIZE];
 		this.villainDeck = randomizeDeck(villians.getVillianDeck());
 		drawCards(this.villainHand, this.villainDeck);
 		this.villainTurn = null;
-		final GameObject startingVillian = new CommanderGameCard(STARTVILLIANX, STARTVILLIANY, this.cards.getCard(villians.getVillianDeck()[0]), EAffiliation.Villain);
+		final CommanderGameCard startingVillian = new CommanderGameCard(STARTVILLIANX, STARTVILLIANY, this.cards.getCard(villians.getVillianDeck()[0]), EAffiliation.Villain);
+		startingVillian.setHealth( startingVillian.getHealth() * 2 );
 		this.gameBoard.put(startingVillian.getUuid(), startingVillian);
 	}
 	
@@ -138,7 +140,7 @@ public class GameState {
 					return "a card has played, but not put on the board.";
 			}
 		}
-		if(powerCost < 0 || power - powerCost != turn.getPower())
+		if(turn.getPower() < 0 || power - powerCost < 0 || power - powerCost != turn.getPower())
 			return "power cost is incorrect";
 		
 		//check movement
@@ -283,7 +285,7 @@ public class GameState {
 				for(final GameObject villainObj: villainObjs) {
 					if(villainObj instanceof GameCard) {
 						final GameCard villainCard = (GameCard) villainObj;
-						if(heroCard.getX() == villainCard.getY() && heroCard.getX() == villainCard.getY()) {
+						if(heroCard.getX() == villainCard.getX() && heroCard.getY() == villainCard.getY()) {
 							combat(heroCard, villainCard);
 							this.events.add(String.format( "combat:%d,%d,%s,%s", heroCard.getX(), heroCard.getY(), heroCard.getUuid(), villainCard.getUuid()) );
 							heroCard.setLastCombat(this.turn);

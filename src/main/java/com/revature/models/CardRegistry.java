@@ -29,6 +29,10 @@ public class CardRegistry {
 			throw new NoCardException("id: " + id);
 	}
 	
+	public Map<Integer,Card> getAllCards() {
+		return this.cards;
+	}
+	
 	private void initCards() {
 		this.cards.put(-1, new CustomCard(-1, EAbilities.SupportHero,    EAffiliation.Hero,    18, 18, 18, 18, 18, 18, "Police Officer","https://www.pngfind.com/pngs/m/66-665071_police-officer-police-officer-png-transparent-png.png"));
 		this.cards.put(-2, new CustomCard(-2, EAbilities.SupportVillain, EAffiliation.Villain, 18, 18, 18, 18, 18, 18, "Henchman","http://player.98fm.com/content/000/images/000095/97723_54_news_hub_93274_656x500.jpg"));
@@ -45,7 +49,7 @@ public class CardRegistry {
 		this.cards.put(226, new CustomCard(226, EAbilities.None,        EAffiliation.Hero, 100, 10,  12,  84,  100, 60,  "Doctor Strange",     "https://www.superherodb.com/pictures2/portraits/10/100/55.jpg"));
 		this.cards.put(234, new CustomCard(234, EAbilities.None,        EAffiliation.Hero, 56,  80,  25,  85,  46,  65,  "Drax the Destroyer", "https://www.superherodb.com/pictures2/portraits/10/100/10016.jpg"));
 		this.cards.put(251, new CustomCard(251, EAbilities.None,        EAffiliation.Hero, 38,  13,  50,  28,  22,  64,  "Falcon",             "https://www.superherodb.com/pictures2/portraits/10/100/56.jpg"));
-		this.cards.put(265, new CustomCard(234, EAbilities.None,        EAffiliation.Hero, 88,  48,  100, 60,  100, 60,  "Flash II",           "https://www.superherodb.com/pictures2/portraits/10/100/892.jpg"));
+		this.cards.put(265, new CustomCard(265, EAbilities.None,        EAffiliation.Hero, 88,  48,  100, 60,  100, 60,  "Flash II",           "https://www.superherodb.com/pictures2/portraits/10/100/892.jpg"));
 		this.cards.put(275, new CustomCard(275, EAbilities.None,        EAffiliation.Hero, 75,  85,  42,  85,  53,  100, "Gamora",             "https://www.superherodb.com/pictures2/portraits/10/100/65.jpg"));
 		this.cards.put(303, new CustomCard(303, EAbilities.None,        EAffiliation.Hero, 75,  85,  33,  70,  100, 64,  "Groot",              "https://www.superherodb.com/pictures2/portraits/10/100/10017.jpg"));
 		this.cards.put(313, new CustomCard(313, EAbilities.Ranged2,	    EAffiliation.Hero, 56,  12,  21,  10,  29,  80,  "Hawkeye",            "https://www.superherodb.com/pictures2/portraits/10/100/73.jpg"));

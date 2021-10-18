@@ -23,8 +23,8 @@ public class GameObject {
 		this.affiliation = affiliation;
 	}
 	
-	private int x;
-	private int y;
+	protected int x;
+	protected int y;
 	private String uuid;
 	private EAffiliation affiliation;
 	

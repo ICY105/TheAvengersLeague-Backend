@@ -23,10 +23,7 @@ AWS Codepipeline and Elastic Beanstalk for deployment
 - Better security, probably using Spring Security features
 
 ## Contributors
-Michael Weathery
-
-John Pham
-
-Sevastian Villegas
-
-Noah Gaston
+- Michael Weathery
+- John Pham
+- Sevastian Villegas
+- Noah Gaston

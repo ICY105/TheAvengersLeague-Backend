@@ -138,7 +138,7 @@ public class GameState {
 					return "a card has played, but not put on the board.";
 			}
 		}
-		if(powerCost < 0 || power - powerCost != turn.getPower())
+		if(turn.getPower() < 0 || power - powerCost < 0 || power - powerCost != turn.getPower())
 			return "power cost is incorrect";
 		
 		//check movement

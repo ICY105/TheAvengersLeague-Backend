@@ -143,7 +143,7 @@ public class GameHandler implements Runnable {
 				}
 			}
 			
-			
+			/*
 			//start a game if 1 person is queued (for testing)
 			while(this.gameQueue.peek() != null) {
 				final int heros = this.gameQueue.poll();
@@ -153,7 +153,7 @@ public class GameHandler implements Runnable {
 				this.games.add(game);
 				this.userGame.put(heros, game);
 			}
-			
+			*/
 			
 			//update games
 			final List<GameState> remove = new LinkedList<GameState>();
